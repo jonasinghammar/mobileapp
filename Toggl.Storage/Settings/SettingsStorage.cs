@@ -341,6 +341,12 @@ namespace Toggl.Storage.Settings
             keyValueStorage.SetBool(hasTimeEntryBeenContinuedKey, false);
             hasTimeEntryBeenContinuedSubject.OnNext(false);
 
+            keyValueStorage.SetBool(calendarIntegrationEnabledKey, false);
+            calendarIntegrationEnabledSubject.OnNext(false);
+
+            keyValueStorage.Remove(enabledCalendarsKey);
+            enabledCalendarsSubject.OnNext(new List<string>());
+
             keyValueStorage.RemoveAllWithPrefix(onboardingPrefix);
         }
 
