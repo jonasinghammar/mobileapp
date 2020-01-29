@@ -122,17 +122,17 @@ namespace Toggl.Core.UI.ViewModels.Calendar
         {
             base.ViewAppeared();
 
-            if (!onboardingStorage.CalendarPermissionWasAskedBefore())
-            {
-                permissionsChecker.CalendarPermissionGranted
+            if (onboardingStorage.CalendarPermissionWasAskedBefore())
+                return;
+
+            permissionsChecker.CalendarPermissionGranted
                     .Where(calendarPermissionGranted => !calendarPermissionGranted)
                     .Select(_ => onboardingStorage.CalendarPermissionWasAskedBefore())
                     .Where(calendarViewWasOpenedBefore => !calendarViewWasOpenedBefore)
                     .SelectMany(_ => View.RequestCalendarAuthorization(false))
                     .Subscribe(onCalendarPermission)
                     .DisposedBy(disposeBag);
-                onboardingStorage.SetCalendarPermissionWasAskedBefore();
-            }
+            onboardingStorage.SetCalendarPermissionWasAskedBefore();
         }
 
         private void onCalendarPermission(bool granted)
