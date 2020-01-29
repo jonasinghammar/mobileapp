@@ -198,7 +198,7 @@ namespace Toggl.Core.UI.ViewModels.Settings
                 userPreferences.SetCalendarIntegrationEnabled(false);
                 userPreferences.SetEnabledCalendars(null);
                 selectedCalendarIds.Clear();
-                reloadCalendars();
+                await reloadCalendars();
                 return;
             }
 
@@ -211,7 +211,7 @@ namespace Toggl.Core.UI.ViewModels.Settings
                     return;
             }
             userPreferences.SetCalendarIntegrationEnabled(true);
-            reloadCalendars();
+            await reloadCalendars();
         }
     }
 }
