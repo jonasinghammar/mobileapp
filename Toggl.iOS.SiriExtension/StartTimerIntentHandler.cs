@@ -59,11 +59,6 @@ namespace SiriExtension
         {
             var workspaceId = intent.Workspace == null ? SharedStorage.Instance.GetDefaultWorkspaceId() : (long)Convert.ToDouble(intent.Workspace.Identifier);
 
-            if (string.IsNullOrEmpty(intent.EntryDescription))
-            {
-                return new TimeEntry(workspaceId, null, null, false, DateTimeOffset.Now, null, "", new long[0], (long)SharedStorage.Instance.GetUserId(), 0, null, DateTimeOffset.Now);
-            }
-
             return new TimeEntry(
                 workspaceId,
                 stringToLong(intent.ProjectId?.Identifier),

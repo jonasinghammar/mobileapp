@@ -2,9 +2,9 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Foundation;
+using Toggl.Core.UI.Views.Settings;
 using Toggl.iOS.Extensions;
 using Toggl.iOS.Extensions.Reactive;
-using Toggl.iOS.ViewControllers.Settings.Models;
 using Toggl.Shared.Extensions;
 using UIKit;
 

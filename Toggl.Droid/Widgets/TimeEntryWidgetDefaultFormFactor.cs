@@ -2,10 +2,7 @@ using Android.Content;
 using Android.OS;
 using Android.Widget;
 using System;
-using Android.App;
-using static Android.Views.ViewStates;
 using Toggl.Droid.Extensions;
-using Android.Graphics;
 using Color = Android.Graphics.Color;
 using Toggl.Shared;
 
@@ -19,7 +16,7 @@ namespace Toggl.Droid.Widgets
 
             SetupActionsForStartAndStopButtons(context, view);
             view.SetTextViewText(Resource.Id.NoRunningTimeEntryLabel, Resources.NoRunningTimeEntry);
-            view.SetOnClickPendingIntent(Resource.Id.RootLayout, getOpenAppToLoginPendingIntent(context));
+            view.SetOnClickPendingIntent(Resource.Id.RootLayout, context.GetOpenAppPendingIntent());
 
             var timeEntryIsRunning = widgetInfo.IsRunning;
             var timeEntryIsStopped = !widgetInfo.IsRunning;
@@ -68,12 +65,6 @@ namespace Toggl.Droid.Widgets
             }
 
             return view;
-        }
-
-        private PendingIntent getOpenAppToLoginPendingIntent(Context context)
-        {
-            var intent = new Intent(context, typeof(SplashScreen)).AddFlags(ActivityFlags.TaskOnHome);
-            return PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent);
         }
     }
 }

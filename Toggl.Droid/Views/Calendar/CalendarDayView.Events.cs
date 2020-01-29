@@ -45,7 +45,8 @@ namespace Toggl.Droid.Views.Calendar
         private int? runningTimeEntryIndex = null;
         private int editingHandlesHorizontalMargins;
         private int editingHandlesRadius;
-        private Bitmap calendarIconBitmap;
+        private Bitmap normalCalendarIconBitmap;
+        private Bitmap smallCalendarIconBitmap;
         private int runningTimeEntryDashedHourTopPadding;
         private int calendarEventBottomLineHeight;
         private int calendarIconRightInsetMargin;
@@ -96,7 +97,8 @@ namespace Toggl.Droid.Views.Calendar
             calendarEventBottomLineHeight = Context.GetDimen(Resource.Dimension.calendarEventBottomLineHeight);
             calendarIconSize = Context.GetDimen(Resource.Dimension.calendarIconSize);
             calendarIconRightInsetMargin = Context.GetDimen(Resource.Dimension.calendarIconRightInsetMargin);
-            calendarIconBitmap = Context.GetVectorDrawable(Resource.Drawable.ic_calendar).ToBitmap(calendarIconSize, calendarIconSize);
+            normalCalendarIconBitmap = Context.GetVectorDrawable(Resource.Drawable.ic_calendar).ToBitmap(calendarIconSize, calendarIconSize);
+            smallCalendarIconBitmap = Context.GetVectorDrawable(Resource.Drawable.ic_calendar).ToBitmap(calendarIconSize / 2, calendarIconSize / 2);
         }
 
         private void updateItemsAndRecalculateEventsAttrs(ImmutableList<CalendarItem> newItems)
@@ -252,8 +254,24 @@ namespace Toggl.Droid.Views.Calendar
             eventsPaint.Color = originalColor;
             canvas.DrawRoundRect(calendarItemRect.Left, calendarItemRect.Bottom - calendarEventBottomLineHeight, calendarItemRect.Right, calendarItemRect.Bottom, commonRoundRectRadius, commonRoundRectRadius, eventsPaint);
 
+            var calendarBitmap = getProperlySizedCalendarBitmap(calendarItemRect);
+            if (calendarBitmap == null)
+                return;
+
             calendarIconPaint.SetColorFilter(new PorterDuffColorFilter(originalColor, PorterDuff.Mode.SrcIn));
-            canvas.DrawBitmap(calendarIconBitmap, calendarItemRect.Left, calendarItemRect.Top, calendarIconPaint);
+            canvas.DrawBitmap(calendarBitmap, calendarItemRect.Left, calendarItemRect.Top, calendarIconPaint);
+        }
+
+        private Bitmap getProperlySizedCalendarBitmap(RectF calendarItemRect)
+        {
+            var containerHeight = calendarItemRect.Height();
+            if (containerHeight > normalCalendarIconBitmap.Height)
+                return normalCalendarIconBitmap;
+
+            if (containerHeight > smallCalendarIconBitmap.Height)
+                return smallCalendarIconBitmap;
+
+            return null;
         }
 
         private void drawCalendarTimeEntryItemShape(Canvas canvas, CalendarItem item, RectF calendarItemRect)

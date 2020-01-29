@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    android:id="@+id/Title"
+    android:textSize="15sp"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingLeft="16dp"
+    android:gravity="center_vertical"
+    tools:text="Submit feedback"
+    android:textColor="@color/primaryText"
+    android:background="?attr/selectableItemBackground"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

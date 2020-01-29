@@ -90,6 +90,8 @@ namespace Toggl.Core.UI.ViewModels
         public ViewAction SelectBeginningOfWeek { get; }
         public ViewAction ToggleManualMode { get; }
         public ViewAction ToggleSwipeActions { get; }
+        public ViewAction ToggleRunningTimerNotifications { get; }
+        public ViewAction ToggleStoppedTimerNotifications { get; }
 
         public SettingsViewModel(
             ITogglDataSource dataSource,
@@ -256,6 +258,8 @@ namespace Toggl.Core.UI.ViewModels
             ToggleTimeEntriesGrouping = rxActionFactory.FromAsync(toggleTimeEntriesGrouping);
             ToggleManualMode = rxActionFactory.FromAction(toggleManualMode);
             ToggleSwipeActions = rxActionFactory.FromAction(toggleSwipeActions);
+            ToggleRunningTimerNotifications = rxActionFactory.FromAction(toggleRunningTimerNotifications);
+            ToggleStoppedTimerNotifications = rxActionFactory.FromAction(toggleStoppedTimerNotifications);
         }
 
         public override async Task Initialize()
@@ -296,13 +300,13 @@ namespace Toggl.Core.UI.ViewModels
             }
         }
 
-        public void ToggleRunningTimerNotifications()
+        private void toggleRunningTimerNotifications()
         {
             var newState = !userPreferences.AreRunningTimerNotificationsEnabled;
             userPreferences.SetRunningTimerNotifications(newState);
         }
 
-        public void ToggleStoppedTimerNotifications()
+        private void toggleStoppedTimerNotifications()
         {
             var newState = !userPreferences.AreStoppedTimerNotificationsEnabled;
             userPreferences.SetStoppedTimerNotifications(newState);

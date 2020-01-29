@@ -1585,13 +1585,6 @@
     <Compile Include="ViewControllers\ReportsViewController.KeyCommands.cs">
       <DependentUpon>ReportsViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewControllers\Settings\Models\AnnotationRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\ButtonRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\CustomRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\InfoRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\ISettingRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\NavigationRow.cs" />
-    <Compile Include="ViewControllers\Settings\Models\ToggleRow.cs" />
     <Compile Include="ViewControllers\Settings\Siri\SiriShortcutsSelectReportPeriodViewController.cs" />
     <Compile Include="ViewControllers\Settings\Siri\SiriShortcutsSelectReportPeriodViewController.designer.cs">
       <DependentUpon>SiriShortcutsSelectReportPeriodViewController.cs</DependentUpon>

@@ -54,7 +54,6 @@ namespace Toggl.iOS.ViewControllers
                 .DisposedBy(DisposeBag);
 
             ViewModel.Shortcuts
-                .Do(_ => calendarCollectionViewSource.ScrollToCurrentPage(true))
                 .Subscribe(quickSelectCollectionViewSource.UpdateShortcuts)
                 .DisposedBy(DisposeBag);
 

@@ -3,9 +3,9 @@ using Foundation;
 using Toggl.Core.Sync;
 using Toggl.Core.UI.Collections;
 using Toggl.Core.UI.Helper;
+using Toggl.Core.UI.Views.Settings;
 using Toggl.iOS.Cells.Settings;
 using Toggl.iOS.Extensions;
-using Toggl.iOS.ViewControllers.Settings.Models;
 using UIKit;
 
 namespace Toggl.iOS.ViewSources

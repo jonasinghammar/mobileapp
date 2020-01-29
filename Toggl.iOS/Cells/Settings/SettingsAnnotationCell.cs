@@ -1,7 +1,7 @@
 ﻿using System;
 using Foundation;
+using Toggl.Core.UI.Views.Settings;
 using Toggl.iOS.Extensions;
-using Toggl.iOS.ViewControllers.Settings.Models;
 using UIKit;
 
 namespace Toggl.iOS.Cells.Settings

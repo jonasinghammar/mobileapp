@@ -86,13 +86,15 @@ namespace Toggl.iOS.ViewControllers
                 .DisposedBy(DisposeBag);
 
             var workspaceObservable = IosDependencyContainer.Instance.InteractorFactory.GetDefaultWorkspace().Execute()
-                .Merge(ViewModel.SelectWorkspace.Elements);
+                .Merge(ViewModel.SelectWorkspace.Elements)
+                .WhereNotNull();
 
             var dateRangeSelectionResultObservable = ViewModel.SelectTimeRange.Elements
                 .StartWith(new DateRangeSelectionResult(
                     new DateRange(DateTime.Now.AddDays(-7), DateTime.Now),
                     DateRangeSelectionSource.ShortcutThisWeek)
-                );
+                )
+                .WhereNotNull();
 
             //Handoff
             viewDidAppearSubject.AsObservable()

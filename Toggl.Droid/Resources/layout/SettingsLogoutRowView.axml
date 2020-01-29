@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingLeft="16dp"
+    android:background="?attr/selectableItemBackground"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/TxtSettingsLogout"
+        android:textSize="15sp"
+        tools:text="Sign out of Toggl"
+        android:gravity="bottom"
+        android:textColor="@color/errorText"
+        android:layout_height="32dp"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="2dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:layout_marginBottom="2dp"
+        android:id="@+id/SyncStateSyncedHolder"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/TxtStateSynced"
+            android:textSize="11sp"
+            tools:text="Synced"
+            android:textColor="@color/syncStateSyncedText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginBottom="2dp"
+        android:id="@+id/SyncStateInProgressHolder"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/TxtStateInProgress"
+            android:textSize="11sp"
+            tools:text="Syncing..."
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+        <ProgressBar
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginLeft="4dp"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleSmall" />
+    </LinearLayout>
+</LinearLayout>

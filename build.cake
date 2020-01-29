@@ -132,14 +132,20 @@ private string GetVersionNumberFromTagOrTimestamp()
         throw new InvalidOperationException($"Unable to get version number from this type of build target: {target}");
     }
     
+    // This fetches the list of tags and adds their creation date
+    // This is needed because if we rely solely on the alphabetical
+    // order of tags, 2.9 comes after 2.10 and that causes problems
     StartProcess("git", new ProcessSettings
     {
-        Arguments = "tag --list '" + platform + "-*'",
+        Arguments = "tag --list '" + platform + "-*' --format='%(creatordate:short)%09%(refname:strip=2)'",
         RedirectStandardOutput = true
     }, out var redirectedOutput);
-
     
-    var tagName = redirectedOutput.DefaultIfEmpty(formattedTimestamp).Last();
+    var tagName = redirectedOutput
+        .OrderBy(x => x)
+        .DefaultIfEmpty(formattedTimestamp)
+        .Last();
+
     if (tagName == formattedTimestamp)
     {
         return tagName;

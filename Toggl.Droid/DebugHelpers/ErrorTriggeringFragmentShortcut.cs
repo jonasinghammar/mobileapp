@@ -13,7 +13,8 @@ namespace Toggl.Droid.Activities
         {
             base.OnResume();
 
-            aboutView.Rx().LongPress()
+            aboutRow.ItemView
+                .Rx().LongPress()
                 .Subscribe(showErrorTriggeringView)
                 .DisposedBy(DisposeBag);
         }

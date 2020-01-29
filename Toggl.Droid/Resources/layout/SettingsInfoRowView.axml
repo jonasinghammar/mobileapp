@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:clickable="true"
+    android:minHeight="56dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/Title"
+        tools:text="heidi@toggl.com"
+        android:textSize="15sp"
+        android:text=""
+        android:lineSpacingExtra="5sp"
+        android:textColor="@color/primaryText"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text=""
+        android:id="@+id/Description"
+        android:textSize="12sp"
+        android:lineSpacingExtra="4sp"
+        android:textColor="@color/secondaryText"
+        tools:text="Username"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</FrameLayout>

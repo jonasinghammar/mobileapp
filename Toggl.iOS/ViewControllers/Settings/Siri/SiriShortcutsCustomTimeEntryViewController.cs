@@ -248,10 +248,13 @@ namespace Toggl.iOS.ViewControllers.Settings.Siri
 
             var workspace = new INObject(selectedWorkspace.Id.ToString(), selectedWorkspace.Name);
 
+            var invocationName = selectedWorkspace.Name;
+
             INObject project = null;
             if (ViewModel.Project.Value is IThreadSafeProject selectedProject)
             {
                 project = new INObject(selectedProject.Id.ToString(), selectedProject.Name);
+                invocationName = selectedProject.Name;
             }
 
             INObject[] tags = null;
@@ -277,6 +280,10 @@ namespace Toggl.iOS.ViewControllers.Settings.Siri
             }
 
             var entryDescription = ViewModel.Description.Value;
+            invocationName = string.IsNullOrEmpty(entryDescription)
+                ? invocationName
+                : entryDescription;
+
             return new StartTimerIntent
             {
                 Workspace = workspace,
@@ -284,7 +291,7 @@ namespace Toggl.iOS.ViewControllers.Settings.Siri
                 Tags = tags,
                 Billable = billable,
                 EntryDescription = ViewModel.Description.Value,
-                SuggestedInvocationPhrase = string.Format(Resources.SiriTrackEntrySuggestedInvocationPhrase, entryDescription)
+                SuggestedInvocationPhrase = string.Format(Resources.SiriTrackEntrySuggestedInvocationPhrase, invocationName)
             };
         }
 

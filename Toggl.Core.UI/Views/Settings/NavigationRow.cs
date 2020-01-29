@@ -1,6 +1,6 @@
 using Toggl.Shared.Extensions;
 
-namespace Toggl.iOS.ViewControllers.Settings.Models
+namespace Toggl.Core.UI.Views.Settings
 {
     public class NavigationRow : ISettingRow
     {

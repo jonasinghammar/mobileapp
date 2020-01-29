@@ -1,14 +1,10 @@
-using Android.App;
 using Android.Appwidget;
 using Android.Content;
 using Android.Widget;
 using Toggl.Droid.Extensions;
-using Toggl.Droid.Helper;
-using Toggl.Droid.Services;
 using Toggl.Droid.SystemServices;
 using Toggl.Shared;
 using static Android.App.PendingIntentFlags;
-using static Android.Content.ActivityFlags;
 using static Toggl.Droid.Widgets.WidgetsConstants;
 
 namespace Toggl.Droid.Widgets
@@ -37,8 +33,7 @@ namespace Toggl.Droid.Widgets
             view.SetTextViewText(Resource.Id.NoData, Resources.NoSuggestionsAvailable);
             view.SetTextViewText(Resource.Id.ShowAllTimeEntriesLabel, Resources.ShowAllTimEntries);
 
-            var openAppIntent = new Intent(context, typeof(SplashScreen)).SetFlags(TaskOnHome);
-            var openAppPendingIntent = PendingIntent.GetActivity(context, 0, openAppIntent, UpdateCurrent);
+            var openAppPendingIntent = context.GetOpenAppPendingIntent();
             view.SetOnClickPendingIntent(Resource.Id.ShowAllTimeEntriesLabel, openAppPendingIntent);
 
             return view;

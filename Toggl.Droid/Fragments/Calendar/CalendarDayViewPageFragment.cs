@@ -140,6 +140,22 @@ namespace Toggl.Droid.Fragments.Calendar
             calendarDayView.HourHeight
                 .Subscribe(updateHourHeightIfCurrentPage)
                 .DisposedBy(DisposeBag);
+            
+            ViewModel.ContextualMenuViewModel
+                .CalendarItemInEditMode
+                .Subscribe(calendarDayView.SetCurrentItemInEditMode)
+                .DisposedBy(DisposeBag);
+
+            ViewModel.ContextualMenuViewModel
+                .MenuVisible
+                .Where(menuIsVisible => !menuIsVisible)
+                .Subscribe(_ => calendarDayView.ClearEditMode())
+                .DisposedBy(DisposeBag);
+
+            ViewModel.ContextualMenuViewModel
+                .DiscardChanges
+                .Subscribe(_ => calendarDayView.DiscardEditModeChanges())
+                .DisposedBy(DisposeBag);
         }
         private void handleMenuVisibility(bool visible)
         {
@@ -171,22 +187,6 @@ namespace Toggl.Droid.Fragments.Calendar
             ViewModel.ContextualMenuViewModel
                 .MenuVisible
                 .Subscribe(notifyMenuVisibilityIfCurrentPage)
-                .DisposedBy(DisposeBag);
-            
-            ViewModel.ContextualMenuViewModel
-                .CalendarItemInEditMode
-                .Subscribe(calendarDayView.SetCurrentItemInEditMode)
-                .DisposedBy(DisposeBag);
-
-            ViewModel.ContextualMenuViewModel
-                .MenuVisible
-                .Where(menuIsVisible => !menuIsVisible)
-                .Subscribe(_ => calendarDayView.ClearEditMode())
-                .DisposedBy(DisposeBag);
-
-            ViewModel.ContextualMenuViewModel
-                .DiscardChanges
-                .Subscribe(_ => calendarDayView.DiscardEditModeChanges())
                 .DisposedBy(DisposeBag);
 
             timeEntryPeriodObserver
