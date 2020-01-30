@@ -8,6 +8,7 @@ using AndroidX.Fragment.App;
 using Toggl.Core.UI.Navigation;
 using Toggl.Core.UI.ViewModels;
 using Toggl.Core.UI.Views;
+using Toggl.Droid.Helper;
 
 namespace Toggl.Droid.Fragments
 {
@@ -85,6 +86,14 @@ namespace Toggl.Droid.Fragments
 
             if (!disposing) return;
             DisposeBag?.Dispose();
+        }
+
+        protected void NotifyLayoutIsReady()
+        {
+            if (!(Activity is ITabLayoutReadyListener layoutReadyListener))
+                return;
+            
+            layoutReadyListener.OnLayoutReady(GetType());
         }
 
         public void SetupToolbar(View fragmentView)
