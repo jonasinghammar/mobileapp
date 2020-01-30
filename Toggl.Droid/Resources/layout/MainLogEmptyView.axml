@@ -1,150 +1,137 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@color/background"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-        android:background="@color/background"
-        android:layout_marginTop="18dp"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="8dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="8dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <!-- row 1 -->
+
+    <View
+        android:layout_width="200dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="96dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/halfTransparentPurple" />
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View
-            android:background="@drawable/background_empty_view"
-            android:backgroundTint="@color/separator"
-            android:layout_height="8dp"
-            android:layout_width="128dp"
-            android:layout_marginLeft="15dp" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <View
-                android:background="@drawable/background_tags"
-                android:layout_width="200dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="15dp" />
-            <View
-                android:background="@drawable/background_tags"
-                android:layout_width="200dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="12dp" />
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_marginTop="28dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="108dp"
+        android:background="@color/separator" />
+
+    <!-- row 2 -->
+
+    <View
+        android:layout_width="134dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="126dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="148dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/halfTransparentBlue" />
+
+    <View
+        android:layout_width="118dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="148dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <View
-                android:background="@drawable/background_empty_view"
-                android:backgroundTint="@color/separator"
-                android:layout_width="50dp"
-                android:layout_height="8dp"
-                android:layout_marginLeft="15dp" />
-            <View
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="8dp" />
-            <View
-                android:background="@drawable/background_empty_view"
-                android:backgroundTint="@color/separator"
-                android:layout_width="50dp"
-                android:layout_height="8dp"
-                android:layout_marginRight="15dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <View
-                android:background="@color/separator"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_width="match_parent" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:background="@color/cardBackground"
-                android:layout_height="70dp"
-                android:layout_width="match_parent">
-                <View
-                    android:background="@drawable/background_empty_view"
-                    android:backgroundTint="@color/separator"
-                    android:layout_height="8dp"
-                    android:layout_width="192dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginLeft="16dp" />
-                <View
-                    android:background="@drawable/background_empty_view"
-                    android:backgroundTint="@color/halfTransparentPurple"
-                    android:layout_width="96dp"
-                    android:layout_height="8dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp" />
-            </LinearLayout>
-            <View
-                android:background="@color/separator"
-                android:layout_height="1dp"
-                android:layout_width="match_parent" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:background="@color/cardBackground"
-                android:layout_height="70dp"
-                android:layout_width="match_parent">
-                <View
-                    android:background="@drawable/background_empty_view"
-                    android:backgroundTint="@color/separator"
-                    android:layout_height="8dp"
-                    android:layout_width="124dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginLeft="16dp" />
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <View
-                        android:background="@drawable/background_empty_view"
-                        android:backgroundTint="@color/halfTransparentBlue"
-                        android:layout_width="41dp"
-                        android:layout_height="8dp" />
-                    <View
-                        android:background="@drawable/background_empty_view"
-                        android:backgroundTint="@color/separator"
-                        android:layout_height="8dp"
-                        android:layout_width="108dp"
-                        android:layout_marginLeft="8dp" />
-                </LinearLayout>
-            </LinearLayout>
-            <View
-                android:background="@color/separator"
-                android:layout_height="1dp"
-                android:layout_width="match_parent" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:background="@color/cardBackground"
-                android:layout_height="70dp"
-                android:layout_width="match_parent">
-                <View
-                    android:background="@drawable/background_empty_view"
-                    android:backgroundTint="@color/separator"
-                    android:layout_height="8dp"
-                    android:layout_width="136dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginLeft="16dp" />
-            </LinearLayout>
-            <View
-                android:background="@color/separator"
-                android:layout_height="1dp"
-                android:layout_width="match_parent" />
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+        android:layout_height="1dp"
+        android:layout_marginTop="172dp"
+        android:background="@color/separator" />
+
+    <!-- row 3 -->
+
+    <View
+        android:layout_width="132dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="236dp"
+        android:background="@color/separator" />
+
+    <!-- row 4 -->
+
+    <View
+        android:layout_width="200dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="254dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="274dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="300dp"
+        android:background="@color/separator" />
+
+    <!-- row 5 -->
+
+    <View
+        android:layout_width="132dp"
+        android:layout_height="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="328dp"
+        android:background="@drawable/background_empty_view"
+        android:backgroundTint="@color/separator" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="364dp"
+        android:background="@color/separator" />
+
+</FrameLayout>
