@@ -583,6 +583,7 @@
     <Compile Include="Adapters\ReportsAdapter.cs" />
     <Compile Include="Adapters\DateRangePickerMonthsPagerAdapter.cs" />
     <Compile Include="Helper\ActiveTheme.cs" />
+    <Compile Include="Helper\ITabLayoutReadyListener.cs" />
     <Compile Include="LayoutManagers\UnpredictiveLinearLayoutManager.cs" />
     <Compile Include="Helper\AppWidgetProviderUtils.cs" />
     <Compile Include="Helper\NotificationsConstants.cs" />
