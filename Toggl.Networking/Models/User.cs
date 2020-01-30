@@ -27,6 +27,7 @@ namespace Toggl.Networking.Models
 
         public string Timezone { get; set; }
 
+        [JsonProperty("updated_at")]
         public DateTimeOffset At { get; set; }
     }
 }
