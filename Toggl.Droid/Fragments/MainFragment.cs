@@ -6,6 +6,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using System;
+using System.Collections.Immutable;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Toggl.Core.Analytics;
@@ -31,6 +32,8 @@ using AndroidX.Core.Content;
 using AndroidX.RecyclerView.Widget;
 using Google.Android.Material.Snackbar;
 using Toggl.Core;
+using Toggl.Core.UI.Collections;
+using Toggl.Core.UI.ViewModels.MainLog.Identity;
 using Toggl.Droid.Views;
 
 namespace Toggl.Droid.Fragments
@@ -178,7 +181,7 @@ namespace Toggl.Droid.Fragments
                 .DisposedBy(DisposeBag);
 
             ViewModel.MainLogItems
-                .Subscribe(mainLogRecyclerAdapter.UpdateCollection)
+                .Subscribe(updateMainLog)
                 .DisposedBy(DisposeBag);
 
             ViewModel.IsTimeEntryRunning
@@ -222,6 +225,12 @@ namespace Toggl.Droid.Fragments
                 .DisposedBy(DisposeBag);
 
             setupOnboardingSteps();
+        }
+
+        private void updateMainLog(IImmutableList<AnimatableSectionModel<MainLogSectionViewModel, MainLogItemViewModel, IMainLogKey>> items)
+        {
+            mainLogRecyclerAdapter.UpdateCollection(items);
+            NotifyLayoutIsReady();
         }
 
         private void handlePlayFabEvent(View.TouchEventArgs eventArgs)
