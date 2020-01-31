@@ -83,5 +83,18 @@ namespace Toggl.Networking.Tests.Integration.BaseTests
 
             CallingEndpointWith(TogglApiWith(Credentials.None)).Should().Throw<UnauthorizedException>();
         }
+
+        [Fact, LogTestInfo]
+        public async Task FetchesTheExactSameEntityWhenFetchingTwice()
+        {
+            var (validApi, user) = await SetupTestUser();
+            ValidApi = validApi;
+
+            var firstEntity = await CallEndpointWith(validApi);
+            await Task.Delay(500).ConfigureAwait(false);
+            var secondEntity = await CallEndpointWith(validApi);
+
+            firstEntity.Should().Be(secondEntity);
+        }
     }
 }
