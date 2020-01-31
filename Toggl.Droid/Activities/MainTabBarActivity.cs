@@ -48,21 +48,16 @@ namespace Toggl.Droid.Activities
         {
         }
 
-        protected override void RestoreViewModelStateFromBundle(Bundle bundle)
+        protected override async void RestoreViewModelStateFromBundle(Bundle bundle)
         {
             base.RestoreViewModelStateFromBundle(bundle);
 
             restoreFragmentsViewModels();
-            showInitialFragment(getInitialTab(Intent, bundle));
+            await showInitialFragment(getInitialTab(Intent, bundle));
         }
 
         protected override void InitializeBindings()
         {
-            navigationView
-                .Rx()
-                .ItemSelected()
-                .Subscribe(onTabSelected)
-                .DisposedBy(DisposeBag);
         }
 
         private int getInitialTab(Intent intent, Bundle bundle = null)
@@ -141,7 +136,8 @@ namespace Toggl.Droid.Activities
 
         private async Task<Fragment> getCachedFragment(int itemId)
         {
-            var cachedFragment = SupportFragmentManager.Fragments.FirstOrDefault(f => f.Tag == itemId.ToString());
+            var cachedFragment = SupportFragmentManager.FindFragmentByTag(itemId.ToString());
+
             if (cachedFragment != null)
                 return cachedFragment;
 
@@ -190,6 +186,7 @@ namespace Toggl.Droid.Activities
 
         private async void onTabSelected(IMenuItem item)
         {
+            if (SupportFragmentManager == null) return;
             if (item.ItemId != navigationView.SelectedItemId)
             {
                 await showFragment(item.ItemId);
@@ -238,16 +235,16 @@ namespace Toggl.Droid.Activities
         private async Task showInitialFragment(int initialTabItemId)
         {
             readyLayouts.Clear();
-            setPlaceholderVisibility(typeof(MainFragment), true);
             SupportFragmentManager.RemoveAllFragments();
             SupportFragmentManager.ExecutePendingTransactions();
 
             var initialFragment = await getCachedFragment(initialTabItemId);
+            setPlaceholderVisibility(typeof(MainFragment),  initialTabItemId == Resource.Id.MainTabTimerItem && !initialFragment.IsAdded);
             if (!initialFragment.IsAdded)
             {
                 SupportFragmentManager
                     .BeginTransaction()
-                    .Add(Resource.Id.CurrentTabFragmmentContainer, initialFragment, initialTabItemId.ToString())
+                    .Replace(Resource.Id.CurrentTabFragmmentContainer, initialFragment, initialTabItemId.ToString())
                     .Commit();
             }
 
@@ -261,6 +258,12 @@ namespace Toggl.Droid.Activities
 
             navigationView.SelectedItemId = initialTabItemId;
             activeFragment = initialFragment;
+            
+            navigationView
+                .Rx()
+                .ItemSelected()
+                .Subscribe(onTabSelected)
+                .DisposedBy(DisposeBag);
         }
 
         public void ChangeBottomBarVisibility(bool isVisible)
