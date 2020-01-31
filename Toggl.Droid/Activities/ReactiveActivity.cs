@@ -10,7 +10,6 @@ using System.Reactive.Disposables;
 using Toggl.Core.UI.ViewModels;
 using Toggl.Core.UI.Views;
 using Toggl.Droid.Extensions;
-using Toggl.Droid.Extensions;
 using Toggl.Droid.Presentation;
 
 namespace Toggl.Droid.Activities
@@ -65,12 +64,6 @@ namespace Toggl.Droid.Activities
             RestoreViewModelStateFromBundle(bundle);
             InitializeBindings();
             this.SetQFlags();
-        }
-
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
-        {
-            base.OnRestoreInstanceState(savedInstanceState);
-            RestoreViewModelStateFromBundle(savedInstanceState);
         }
 
         /// <summary>
