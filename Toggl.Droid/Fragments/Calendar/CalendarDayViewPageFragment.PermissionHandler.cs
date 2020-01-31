@@ -26,6 +26,9 @@ namespace Toggl.Droid.Fragments.Calendar
         public void StartActivityIntent(Intent intent)
             => StartActivity(intent);
 
+        public bool ShouldShowPermissionRationale(string permission)
+            => ShouldShowRequestPermissionRationale(permission);
+
         public IObservable<bool> RequestCalendarAuthorization(bool force = false)
             => this.ProcessCalendarAuthorizationRequest(force);
 
@@ -34,7 +37,7 @@ namespace Toggl.Droid.Fragments.Calendar
 
         public void OpenAppSettings()
             => this.FireAppSettingsIntent();
-        
+
         public IObservable<string> GetGoogleToken()
         {
             if (!(Activity is IGoogleTokenProvider tokenProvider))

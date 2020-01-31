@@ -15,7 +15,7 @@ namespace Toggl.Droid.Extensions
     {
         private const int calendarAuthCode = 500;
 
-        public static void ProcessRequestPermissionsResult(this IPermissionRequesterComponent permissionRequester, int requestCode, string[] permissions, Permission[] grantResults)
+        public static void  ProcessRequestPermissionsResult(this IPermissionRequesterComponent permissionRequester, int requestCode, string[] permissions, Permission[] grantResults)
         {
             if (requestCode != calendarAuthCode)
             {
@@ -40,6 +40,17 @@ namespace Toggl.Droid.Extensions
                     return permissionRequester.CalendarAuthorizationSubject.AsObservable();
 
                 permissionRequester.CalendarAuthorizationSubject = new Subject<bool>();
+
+                if (force)
+                {
+                    var doNotAskWasChecked = !permissionRequester.ShouldShowPermissionRationale(Manifest.Permission.ReadCalendar);
+                    if (doNotAskWasChecked)
+                    {
+                        permissionRequester.FireAppSettingsIntent();
+                        return permissionRequester.CalendarAuthorizationSubject;
+                    }
+                }
+
                 permissionRequester.RequestPermissions(new[] { Manifest.Permission.ReadCalendar }, calendarAuthCode);
 
                 return permissionRequester.CalendarAuthorizationSubject.AsObservable();

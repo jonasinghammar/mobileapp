@@ -22,7 +22,7 @@ namespace Toggl.iOS
             base.AwakeFromNib();
             TextLabel.Text = Resources.AllowCalendarAccess;
             DescriptionLabel.Text = Resources.CalendarAccessExplanation;
-            LinkCalendarsSwitchTapped = LinkCalendarsSwitch.Rx().Tap();
+            LinkCalendarsSwitchTapped = LinkCalendarsSwitch.Rx().Changed();
 
             EnableCalendarAccessView.InsertSeparator();
         }
@@ -35,7 +35,8 @@ namespace Toggl.iOS
 
         public void SetCalendarIntegrationStatus(bool enabled)
         {
-            LinkCalendarsSwitch.On = enabled;
+            if (LinkCalendarsSwitch.On != enabled)
+                LinkCalendarsSwitch.On = enabled;
         }
     }
 }

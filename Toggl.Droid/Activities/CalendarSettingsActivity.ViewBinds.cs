@@ -5,7 +5,7 @@ using Toggl.Droid.Adapters;
 
 namespace Toggl.Droid.Activities
 {
-    public sealed partial class CalendarSettingsActivity
+    public partial class CalendarSettingsActivity
     {
         private View toggleCalendarsView;
         private Switch toggleCalendarsSwitch;

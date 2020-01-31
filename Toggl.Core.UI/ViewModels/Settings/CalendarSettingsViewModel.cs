@@ -32,8 +32,10 @@ namespace Toggl.Core.UI.ViewModels.Settings
         private readonly IAnalyticsService analyticsService;
         private readonly IOnboardingStorage onboardingStorage;
         private readonly IInteractorFactory interactorFactory;
+        private readonly ISchedulerProvider schedulerProvider;
         private readonly IPermissionsChecker permissionsChecker;
 
+        private readonly ISubject<bool> calendarIntegrationEnabledSubject = new Subject<bool>();
         private readonly CompositeDisposable disposeBag = new CompositeDisposable();
         private readonly ISubject<ImmutableCalendarSectionModel> calendarsSubject =
             new BehaviorSubject<ImmutableCalendarSectionModel>(ImmutableList.Create<CalendarSectionModel>());
@@ -72,6 +74,7 @@ namespace Toggl.Core.UI.ViewModels.Settings
             this.analyticsService = analyticsService;
             this.onboardingStorage = onboardingStorage;
             this.interactorFactory = interactorFactory;
+            this.schedulerProvider = schedulerProvider;
             this.permissionsChecker = permissionsChecker;
 
             Save = rxActionFactory.FromAction(save);
@@ -80,7 +83,8 @@ namespace Toggl.Core.UI.ViewModels.Settings
 
             Calendars = calendarsSubject.AsObservable().DistinctUntilChanged();
             CalendarIntegrationEnabled = userPreferences.CalendarIntegrationEnabledObservable
-                .StartWith(userPreferences.CalendarIntegrationEnabled());
+                .StartWith(userPreferences.CalendarIntegrationEnabled())
+                .Merge(calendarIntegrationEnabledSubject.AsObservable());
         }
 
         public override async Task Initialize()
@@ -112,9 +116,17 @@ namespace Toggl.Core.UI.ViewModels.Settings
             if (!onboardingStorage.CalendarPermissionWasAskedBefore())
             {
                 View.RequestCalendarAuthorization(false)
-                    .Subscribe(_ => onboardingStorage.SetCalendarPermissionWasAskedBefore())
+                    .ObserveOn(schedulerProvider.MainScheduler)
+                    .Subscribe(onCalendarPermission)
                     .DisposedBy(disposeBag);
+                onboardingStorage.SetCalendarPermissionWasAskedBefore();
             }
+        }
+
+        private void onCalendarPermission(bool granted)
+        {
+            if (granted)
+                toggleCalendarIntegration();
         }
 
         public override void ViewDestroyed()
@@ -122,12 +134,6 @@ namespace Toggl.Core.UI.ViewModels.Settings
             base.ViewDestroyed();
 
             disposeBag.Dispose();
-        }
-
-        public override Task<bool> CloseWithDefaultResult()
-        {
-            userPreferences.SetEnabledCalendars(initialSelectedCalendarIds.ToArray());
-            return base.CloseWithDefaultResult();
         }
 
         private async Task reloadCalendars()
@@ -208,10 +214,19 @@ namespace Toggl.Core.UI.ViewModels.Settings
             {
                 var permissionGranted = await View.RequestCalendarAuthorization(true);
                 if (!permissionGranted)
+                {
+                    calendarIntegrationEnabledSubject.OnNext(false);
                     return;
+                }
             }
             userPreferences.SetCalendarIntegrationEnabled(true);
             await reloadCalendars();
+        }
+
+        public override void Close()
+        {
+            Save.Execute();
+            base.Close();
         }
     }
 }

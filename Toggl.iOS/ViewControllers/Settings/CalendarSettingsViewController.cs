@@ -33,7 +33,10 @@ namespace Toggl.iOS.ViewControllers.Settings
             header.TranslatesAutoresizingMaskIntoConstraints = false;
             header.HeightAnchor.ConstraintEqualTo(tableViewHeaderHeight).Active = true;
             header.WidthAnchor.ConstraintEqualTo(UserCalendarsTableView.WidthAnchor).Active = true;
-            header.SetCalendarIntegrationStatus(IosDependencyContainer.Instance.UserPreferences.CalendarIntegrationEnabled());
+
+            ViewModel.CalendarIntegrationEnabled
+                .Subscribe(header.SetCalendarIntegrationStatus)
+                .DisposedBy(DisposeBag);
 
             var source = new SelectUserCalendarsTableViewSource(UserCalendarsTableView, ViewModel.SelectCalendar);
             UserCalendarsTableView.Source = source;
@@ -43,7 +46,8 @@ namespace Toggl.iOS.ViewControllers.Settings
                 .DisposedBy(DisposeBag);
 
             header.LinkCalendarsSwitchTapped
-                .Subscribe(ViewModel.ToggleCalendarIntegration.Execute);
+                .Subscribe(ViewModel.ToggleCalendarIntegration.Execute)
+                .DisposedBy(DisposeBag);
 
             source.Rx().ModelSelected()
                 .Subscribe(ViewModel.SelectCalendar.Inputs)

@@ -527,6 +527,7 @@
     <Compile Include="Activities\ForgotPasswordActivity.ViewBinds.cs">
       <DependentUpon>ForgotPasswordActivity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Activities\IndependentCalenarSettingsActivity.cs" />
     <Compile Include="Activities\LicensesActivity.cs" />
     <Compile Include="Activities\OutdatedAppActivity.ViewBinds.cs">
       <DependentUpon>OutdatedAppActivity.cs</DependentUpon>
@@ -1076,7 +1077,6 @@
     <AndroidResource Include="Resources\layout\UpcomingEventsNotificationSettingsFragment.axml" />
     <AndroidResource Include="Resources\layout\SelectCalendarNotificationsOptionItem.axml" />
     <AndroidResource Include="Resources\layout\CalendarSettingsActivity.axml" />
-    <AndroidResource Include="Resources\menu\CalendarSettingsMenu.xml" />
     <AndroidResource Include="Resources\layout\CalendarHeaderView.axml" />
     <AndroidResource Include="Resources\drawable\shape_widget_start_button.xml" />
     <AndroidResource Include="Resources\drawable\shape_widget_stop_button.xml" />

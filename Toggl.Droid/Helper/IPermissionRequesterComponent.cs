@@ -13,5 +13,7 @@ namespace Toggl.Droid.Helper
         Permission CheckPermission(string permission);
 
         void StartActivityIntent(Intent intent);
+
+        bool ShouldShowPermissionRationale(string permission);
     }
 }

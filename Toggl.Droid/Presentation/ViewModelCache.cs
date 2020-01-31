@@ -10,9 +10,16 @@ namespace Toggl.Droid.Presentation
         private readonly Dictionary<Type, IViewModel> cache = new Dictionary<Type, IViewModel>();
 
         public TViewModel Get<TViewModel>()
-            where TViewModel : IViewModel
+            where TViewModel : class, IViewModel
         {
-            cache.TryGetValue(typeof(TViewModel), out var cachedViewModel);
+            var type = typeof(TViewModel);
+            if (!cache.TryGetValue(type, out var cachedViewModel))
+            {
+                var subClass = cache.Keys.FirstOrDefault(t => t.IsSubclassOf(type));
+                if (subClass == null)
+                    throw new InvalidOperationException($"Requested VM {type.Name} not in cache");
+                cache.TryGetValue(subClass, out cachedViewModel);
+            }
             return (TViewModel)cachedViewModel;
         }
 

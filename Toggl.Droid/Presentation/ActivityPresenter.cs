@@ -34,7 +34,8 @@ namespace Toggl.Droid.Presentation
             typeof(SignupViewModel),
             typeof(StartTimeEntryViewModel),
             typeof(TokenResetViewModel),
-            typeof(SettingsViewModel)
+            typeof(SettingsViewModel),
+            typeof(IndependentCalendarSettingsViewModel)
         };
 
         private readonly Dictionary<Type, ActivityPresenterInfo> presentableActivitiesInfos = new Dictionary<Type, ActivityPresenterInfo>
@@ -55,6 +56,7 @@ namespace Toggl.Droid.Presentation
             [typeof(SelectTagsViewModel)] = new ActivityPresenterInfo(typeof(SelectTagsActivity)),
             [typeof(SendFeedbackViewModel)] = new ActivityPresenterInfo(typeof(SendFeedbackActivity)),
             [typeof(SettingsViewModel)] = new ActivityPresenterInfo(typeof(SettingsActivity)),
+            [typeof(IndependentCalendarSettingsViewModel)] = new ActivityPresenterInfo(typeof(IndependentCalendarSettingsActivity)),
             [typeof(SignupViewModel)] = new ActivityPresenterInfo(typeof(SignUpActivity), clearBackStackFlags),
             [typeof(StartTimeEntryViewModel)] = new ActivityPresenterInfo(typeof(StartTimeEntryActivity)),
             [typeof(TokenResetViewModel)] = new ActivityPresenterInfo(typeof(TokenResetActivity), clearBackStackFlags)

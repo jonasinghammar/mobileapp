@@ -14,8 +14,15 @@ namespace Toggl.Droid.Activities
               WindowSoftInputMode = SoftInput.AdjustResize,
               ScreenOrientation = ScreenOrientation.Portrait,
               ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize)]
-    public sealed partial class CalendarSettingsActivity : ReactiveActivity<CalendarSettingsViewModel>
+    public partial class CalendarSettingsActivity : ReactiveActivity<CalendarSettingsViewModel>
     {
+        protected CalendarSettingsActivity(ActivityTransitionSet transitions) : base(
+            Resource.Layout.CalendarSettingsActivity,
+            Resource.Style.AppTheme,
+            transitions)
+        {
+        }
+
         public CalendarSettingsActivity() : base(
             Resource.Layout.CalendarSettingsActivity,
             Resource.Style.AppTheme,
@@ -43,7 +50,7 @@ namespace Toggl.Droid.Activities
                 .DisposedBy(DisposeBag);
 
             ViewModel.CalendarIntegrationEnabled
-                .Subscribe(toggleCalendarsSwitch.Rx().CheckedObserver())
+                .Subscribe(toggleCalendarsSwitch.Rx().CheckedObserver(true))
                 .DisposedBy(DisposeBag);
 
             ViewModel.CalendarIntegrationEnabled
@@ -54,25 +61,6 @@ namespace Toggl.Droid.Activities
                 .ItemTapObservable
                 .Subscribe(ViewModel.SelectCalendar.Inputs)
                 .DisposedBy(DisposeBag);
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater.Inflate(Resource.Menu.CalendarSettingsMenu, menu);
-            var doneMenuItem = menu.FindItem(Resource.Id.Done);
-            doneMenuItem.SetTitle(Shared.Resources.Done);
-            return true;
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            if (item.ItemId == Resource.Id.Done)
-            {
-                ViewModel.Save.Execute();
-                return true;
-            }
-
-            return base.OnOptionsItemSelected(item);
         }
     }
 }
