@@ -75,7 +75,6 @@ namespace Toggl.Droid.Activities
 
         protected override void InitializeBindings()
         {
-
             descriptionEditText.Rx().FocusChanged()
                 .Select(isFocused => isFocused ? TextResources.Done : TextResources.Save)
                 .Subscribe(textResource => saveMenuItem?.SetTitle(textResource));

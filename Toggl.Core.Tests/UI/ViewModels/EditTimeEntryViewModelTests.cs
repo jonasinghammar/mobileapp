@@ -142,7 +142,7 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 var observable = Observable.Return(preferences);
 
                 InteractorFactory
-                    .GetPreferences()
+                    .ObserveCurrentPreferences()
                     .Execute()
                     .Returns(observable);
             }

@@ -19,6 +19,7 @@ using Toggl.Droid.Helper;
 using Toggl.Droid.Presentation;
 using Toggl.Shared.Extensions;
 using Fragment = AndroidX.Fragment.App.Fragment;
+using System.Threading.Tasks;
 
 namespace Toggl.Droid.Activities
 {
@@ -32,13 +33,9 @@ namespace Toggl.Droid.Activities
         public static readonly string StartDateExtra = "StartDateExtra";
         public static readonly string EndDateExtra = "EndDateExtra";
 
-        private readonly Dictionary<int, Fragment> fragments = new Dictionary<int, Fragment>();
         private Fragment activeFragment;
         private bool activityResumedBefore = false;
         private int? requestedInitialTab;
-        private long? reportsRequestedWorkspaceId;
-        private DateTimeOffset? reportsRequestedStartDate;
-        private DateTimeOffset? reportsRequestedEndDate;
 
         public MainTabBarActivity() : base(
             Resource.Layout.MainTabBarActivity,
@@ -57,7 +54,6 @@ namespace Toggl.Droid.Activities
 
             restoreFragmentsViewModels();
             showInitialFragment(getInitialTab(Intent, bundle));
-            loadReportsIntentExtras(Intent);
         }
 
         protected override void InitializeBindings()
@@ -83,34 +79,12 @@ namespace Toggl.Droid.Activities
         {
             base.OnNewIntent(intent);
             requestedInitialTab = getInitialTab(intent);
-            loadReportsIntentExtras(intent);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
             outState.PutInt(StartingTabExtra, navigationView.SelectedItemId);
             base.OnSaveInstanceState(outState);
-        }
-
-        private void loadReportsIntentExtras(Intent intent)
-        {
-            var workspaceId = intent.GetLongExtra(WorkspaceIdExtra, 0L);
-            var startDate = intent.GetLongExtra(StartDateExtra, 0L);
-            var endDate = intent.GetLongExtra(EndDateExtra, 0L);
-
-            if (workspaceId == 0)
-                reportsRequestedWorkspaceId = null;
-
-            if (startDate == 0 || endDate == 0)
-            {
-                reportsRequestedStartDate = default(DateTimeOffset);
-                reportsRequestedEndDate = default(DateTimeOffset);
-            }
-            else
-            {
-                reportsRequestedStartDate = DateTimeOffset.FromUnixTimeSeconds(startDate);
-                reportsRequestedEndDate = DateTimeOffset.FromUnixTimeSeconds(endDate);    
-            }
         }
 
         private void restoreFragmentsViewModels()
@@ -120,13 +94,13 @@ namespace Toggl.Droid.Activities
                 switch (frag)
                 {
                     case MainFragment mainFragment:
-                        mainFragment.ViewModel = getTabViewModel<MainViewModel>();
+                        mainFragment.ViewModel = ViewModel.MainViewModel.Value as MainViewModel;
                         break;
                     case ReportsFragment reportsFragment:
-                        reportsFragment.ViewModel = getTabViewModel<ReportsViewModel>();
+                        reportsFragment.ViewModel = ViewModel.ReportsViewModel.Value as ReportsViewModel;
                         break;
                     case CalendarFragment calendarFragment:
-                        calendarFragment.ViewModel = getTabViewModel<CalendarViewModel>();
+                        calendarFragment.ViewModel = ViewModel.CalendarViewModel.Value as CalendarViewModel;
                         break;
                 }
             }
@@ -149,32 +123,35 @@ namespace Toggl.Droid.Activities
             requestedInitialTab = null;
         }
 
-        private Fragment getCachedFragment(int itemId)
+        private async Task<Fragment> getCachedFragment(int itemId)
         {
-            if (fragments.TryGetValue(itemId, out var fragment))
-                return fragment;
+            var cachedFragment = SupportFragmentManager.Fragments.FirstOrDefault(f => f.Tag == itemId.ToString());
+            if (cachedFragment != null)
+                return cachedFragment;
 
-            switch (itemId)
+            return itemId switch
             {
-                case Resource.Id.MainTabTimerItem:
-                    fragment = new MainFragment { ViewModel = getTabViewModel<MainViewModel>() };
-                    break;
-                case Resource.Id.MainTabReportsItem:
-                    fragment = new ReportsFragment { ViewModel = getTabViewModel<ReportsViewModel>() };
-                    break;
-                case Resource.Id.MainTabCalendarItem:
-                    fragment = new CalendarFragment { ViewModel = getTabViewModel<CalendarViewModel>() };
-                    break;
-                default:
-                    throw new ArgumentException($"Unexpected item id {itemId}");
-            }
-            fragments[itemId] = fragment;
-            return fragment;
+                Resource.Id.MainTabTimerItem => await Task.Run<Fragment>(async () =>
+                {
+                    var viewModel = ViewModel.MainViewModel.Value as MainViewModel;
+                    await viewModel.Initialize();
+                    return new MainFragment { ViewModel = viewModel };
+                }),
+                Resource.Id.MainTabReportsItem => await Task.Run<Fragment>(async () =>
+                {
+                    var viewModel = ViewModel.ReportsViewModel.Value as ReportsViewModel;
+                    await viewModel.Initialize();
+                    return new ReportsFragment { ViewModel = viewModel };
+                }),
+                Resource.Id.MainTabCalendarItem => await Task.Run<Fragment>(async () =>
+                {
+                    var viewModel = ViewModel.CalendarViewModel.Value as CalendarViewModel;
+                    await viewModel.Initialize();
+                    return new CalendarFragment { ViewModel = viewModel };
+                }),
+                _ => throw new ArgumentException($"Unexpected item id {itemId}")
+            };
         }
-
-        private TTabViewModel getTabViewModel<TTabViewModel>()
-            where TTabViewModel : class, IViewModel
-            => ViewModel.Tabs.OfType<TTabViewModel>().Single();
 
         public override void OnBackPressed()
         {
@@ -190,41 +167,47 @@ namespace Toggl.Droid.Activities
                 if (calendarFragment?.HandledBackPress() == true)
                     return;
             }
-
-            var fragment = getCachedFragment(Resource.Id.MainTabTimerItem);
-
-            showFragment(fragment);
-
+            
+            showFragment(Resource.Id.MainTabTimerItem);
             navigationView.SelectedItemId = Resource.Id.MainTabTimerItem;
         }
 
-        private void onTabSelected(IMenuItem item)
+        private async void onTabSelected(IMenuItem item)
         {
-            var fragment = getCachedFragment(item.ItemId);
             if (item.ItemId != navigationView.SelectedItemId)
             {
-                showFragment(fragment);
+                await showFragment(item.ItemId);
                 return;
             }
 
+            var fragment = await getCachedFragment(item.ItemId);
             if (fragment is IScrollableToStart scrollableToTop)
             {
                 scrollableToTop.ScrollToStart();
             }
         }
 
-        private void showFragment(Fragment fragment)
+        private async Task showFragment(int fragmentId)
         {
             SupportFragmentManager.ExecutePendingTransactions();
             var transaction = SupportFragmentManager.BeginTransaction();
+            var fragment = await getCachedFragment(fragmentId);
 
             if (activeFragment is MainFragment mainFragmentToHide)
                 mainFragmentToHide.SetFragmentIsVisible(false);
 
             if (fragment.IsAdded)
-                transaction.Hide(activeFragment).Show(fragment);
+            {
+                transaction
+                    .Hide(activeFragment)
+                    .Show(fragment);
+            }
             else
-                transaction.Add(Resource.Id.CurrentTabFragmmentContainer, fragment).Hide(activeFragment);
+            {
+                transaction
+                    .Add(Resource.Id.CurrentTabFragmmentContainer, fragment, fragmentId.ToString())
+                    .Hide(activeFragment);
+            }
 
             transaction.Commit();
 
@@ -234,17 +217,17 @@ namespace Toggl.Droid.Activities
             activeFragment = fragment;
         }
 
-        private void showInitialFragment(int initialTabItemId)
+        private async Task showInitialFragment(int initialTabItemId)
         {
             SupportFragmentManager.RemoveAllFragments();
             SupportFragmentManager.ExecutePendingTransactions();
 
-            var initialFragment = getCachedFragment(initialTabItemId);
+            var initialFragment = await getCachedFragment(initialTabItemId);
             if (!initialFragment.IsAdded)
             {
                 SupportFragmentManager
                     .BeginTransaction()
-                    .Add(Resource.Id.CurrentTabFragmmentContainer, initialFragment)
+                    .Add(Resource.Id.CurrentTabFragmmentContainer, initialFragment, initialTabItemId.ToString())
                     .Commit();
             }
 
@@ -256,7 +239,6 @@ namespace Toggl.Droid.Activities
                 ChangeBottomBarVisibility(true);
             }
 
-            requestedInitialTab = initialTabItemId;
             navigationView.SelectedItemId = initialTabItemId;
             activeFragment = initialFragment;
         }

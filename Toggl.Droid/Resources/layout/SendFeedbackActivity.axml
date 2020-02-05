@@ -5,13 +5,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/Toolbar"
-            style="@style/ToolbarStyle" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/Toolbar"
+        style="@style/ToolbarStyle" />
     <androidx.cardview.widget.CardView
         android:id="@+id/ErrorCard"
         android:minHeight="70dp"

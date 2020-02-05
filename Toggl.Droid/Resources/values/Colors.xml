@@ -13,6 +13,7 @@
   <color name="textEditBackgroundTint">#FFE2E2E2</color>
 
   <!-- App wide-->
+  <color name="icon">#FF757575</color>
   <color name="checkboxTint">#FF328FFF</color>
   <color name="raisedButtonBackground">#FF328FFF</color>
 
@@ -100,6 +101,7 @@
   <color name="darkBackground">#303030</color>
   <color name="primaryTextOnDarkBackground">#DDFFFFFF</color>
   <color name="weekStripeDisabledDayColor">#BDBDBD</color>
+  <color name="toolbarActionColor">#2F6BDF</color>
   
   <!-- Login/Sign Up -->
   <color name="loginSignUpOptionsDivider">#F3F3F3</color>

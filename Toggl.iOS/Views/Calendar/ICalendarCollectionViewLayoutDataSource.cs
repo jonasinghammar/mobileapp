@@ -10,8 +10,8 @@ namespace Toggl.iOS.Views.Calendar
 
         CalendarItemLayoutAttributes LayoutAttributesForItemAtIndexPath(NSIndexPath indexPath);
 
-        NSIndexPath IndexPathForEditingItem();
+        NSIndexPath IndexPathForSelectedItem { get; }
 
-        NSIndexPath IndexPathForRunningTimeEntry();
+        NSIndexPath IndexPathForRunningTimeEntry { get; }
     }
 }

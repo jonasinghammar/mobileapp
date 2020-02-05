@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/SelectProjectProjectCell"
     android:elevation="1dp"
-    android:background="@color/cardBackground"
+    android:background="@color/background"
     android:foreground="?android:attr/selectableItemBackground"               
     android:layout_height="48dp"
     android:layout_width="match_parent">
@@ -49,7 +49,7 @@
         android:layout_toRightOf="@id/ProjectLabel" />
     <View
         android:visibility="visible"
-        android:background="@drawable/gradient_transparent_to_card_color"
+        android:background="@drawable/gradient_transparent_to_bg"
         android:layout_width="128dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true" />

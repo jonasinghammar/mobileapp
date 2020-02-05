@@ -67,6 +67,12 @@ namespace Toggl.Droid.Activities
             this.SetQFlags();
         }
 
+        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        {
+            base.OnRestoreInstanceState(savedInstanceState);
+            RestoreViewModelStateFromBundle(savedInstanceState);
+        }
+
         /// <summary>
         /// Use this to rehydrate the ViewModel after tombstoning
         /// </summary>
@@ -171,6 +177,7 @@ namespace Toggl.Droid.Activities
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(showHomeAsUp);
             SupportActionBar.SetDisplayShowHomeEnabled(showHomeAsUp);
+            toolbar.Elevation = 0;
         }
 
         private void setupRootViewInsets()

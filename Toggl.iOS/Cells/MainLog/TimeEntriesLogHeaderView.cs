@@ -8,7 +8,7 @@ using UIKit;
 
 namespace Toggl.iOS.Views
 {
-    public partial class TimeEntriesLogHeaderView : BaseTableHeaderFooterView<DaySummaryViewModel>
+    public partial class TimeEntriesLogHeaderView : BaseTableHeaderFooterView<MainLogSectionViewModel>
     {
         public static readonly string Identifier = "timeEntryLogHeaderCell";
 
@@ -42,14 +42,20 @@ namespace Toggl.iOS.Views
 
         protected override void UpdateView()
         {
-            DateLabel.Text = Item.Title;
-            DurationLabel.Text = Item.TotalTrackedTime;
-            updateAccessibilityProperties();
+            if (Item is DaySummaryViewModel daySummary)
+            {
+                DateLabel.Text = daySummary.Title;
+                DurationLabel.Text = daySummary.TotalTrackedTime;
+                updateAccessibilityProperties();
+            }
         }
 
         private void updateAccessibilityProperties()
         {
-            AccessibilityLabel = $"{Item.Title}, {Resources.TrackedTime}: {Item.TotalTrackedTime}";
+            if (Item is DaySummaryViewModel daySummary)
+            {
+                AccessibilityLabel = $"{daySummary.Title}, {Resources.TrackedTime}: {daySummary.TotalTrackedTime}";
+            }
         }
     }
 }

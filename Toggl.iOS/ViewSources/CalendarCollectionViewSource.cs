@@ -27,6 +27,7 @@ namespace Toggl.iOS.ViewSources
         private static readonly string twentyFourHoursFormat = Resources.TwentyFourHoursFormat;
         private static readonly string editingTwelveHoursFormat = Resources.EditingTwelveHoursFormat;
         private static readonly string editingTwentyFourHoursFormat = Resources.EditingTwentyFourHoursFormat;
+        private const string newItemId = "";
 
         private readonly string itemReuseIdentifier = nameof(CalendarItemView);
         private readonly string hourReuseIdentifier = nameof(HourSupplementaryView);
@@ -40,15 +41,17 @@ namespace Toggl.iOS.ViewSources
         private IList<CalendarItemLayoutAttributes> layoutAttributes;
         private TimeFormat timeOfDayFormat = TimeFormat.TwelveHoursFormat;
         private DateTime date;
-        private NSIndexPath editingItemIndexPath;
-        private NSIndexPath runningTimeEntryIndexPath;
-        private UICollectionView collectionView;
+        private string selectedItemId;
+        private string runningTimeEntryId;
 
         private readonly CompositeDisposable disposeBag = new CompositeDisposable();
         private readonly ISubject<CalendarItem> itemTappedSubject = new Subject<CalendarItem>();
 
+        private UICollectionView collectionView;
         private CalendarCollectionViewLayout layout => collectionView.CollectionViewLayout as CalendarCollectionViewLayout;
         private CalendarLayoutCalculator layoutCalculator;
+        public NSIndexPath IndexPathForSelectedItem => indexPathFor(selectedItemId);
+        public NSIndexPath IndexPathForRunningTimeEntry => indexPathFor(runningTimeEntryId);
 
         public bool IsEditing { get; private set; }
 
@@ -101,9 +104,10 @@ namespace Toggl.iOS.ViewSources
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var cell = collectionView.DequeueReusableCell(itemReuseIdentifier, indexPath) as CalendarItemView;
+            var item = calendarItems[(int) indexPath.Item];
             cell.Layout = layout;
-            cell.Item = calendarItems[(int)indexPath.Item];
-            cell.IsEditing = IsEditing && indexPath == editingItemIndexPath;
+            cell.Item = item;
+            cell.IsEditing = IsEditing && selectedItemId == item.Id;
             return cell;
         }
 
@@ -128,7 +132,7 @@ namespace Toggl.iOS.ViewSources
             else if (elementKind == CalendarCollectionViewLayout.EditingHourSupplementaryViewKind)
             {
                 var reusableView = collectionView.DequeueReusableSupplementaryView(elementKind, editingHourReuseIdentifier, indexPath) as EditingHourSupplementaryView;
-                var attrs = layoutAttributes[(int)editingItemIndexPath.Item];
+                var attrs = LayoutAttributesForItemAtIndexPath(IndexPathForSelectedItem);
                 var hour = (int)indexPath.Item == 0 ? attrs.StartTime.ToLocalTime() : attrs.EndTime.ToLocalTime();
                 reusableView.SetLabel(hour.ToString(editingHourFormat(), DateFormatCultureInfo.CurrentCulture));
                 return reusableView;
@@ -156,18 +160,12 @@ namespace Toggl.iOS.ViewSources
         public CalendarItemLayoutAttributes LayoutAttributesForItemAtIndexPath(NSIndexPath indexPath)
             => layoutAttributes[(int)indexPath.Item];
 
-        public NSIndexPath IndexPathForEditingItem()
-            => editingItemIndexPath;
-
-        public NSIndexPath IndexPathForRunningTimeEntry()
-            => runningTimeEntryIndexPath;
-
         public CalendarItem? CalendarItemAtPoint(CGPoint point)
         {
             var indexPath = collectionView.IndexPathForItemAtPoint(point);
             if (indexPath != null && indexPath.Item < calendarItems.Count)
             {
-                return calendarItems[(int)indexPath.Item];
+                return itemAt(indexPath);
             }
             return null;
         }
@@ -184,13 +182,13 @@ namespace Toggl.iOS.ViewSources
             if (!IsEditing)
                 return null;
 
-            return layout.LayoutAttributesForItem(editingItemIndexPath).Frame;
+            return layout.LayoutAttributesForItem(IndexPathForSelectedItem).Frame;
         }
 
         public List<CalendarItemLayoutAttributes> GapsBetweenTimeEntriesOf2HoursOrLess()
         {
             var timeEntries = calendarItems
-                .Where(item => item.CalendarId == "")
+                .Where(item => item.CalendarId == newItemId)
                 .OrderBy(te => te.StartTime)
                 .ToList();
 
@@ -203,56 +201,34 @@ namespace Toggl.iOS.ViewSources
             layout.IsEditing = true;
         }
 
-        public void StartEditing(NSIndexPath indexPath)
-        {
-            var indexPathsToReload = new List<NSIndexPath> { indexPath };
-            if (editingItemIndexPath != null && !editingItemIndexPath.Equals(indexPath))
-                indexPathsToReload.Add(editingItemIndexPath);
-            IsEditing = true;
-            editingItemIndexPath = indexPath;
-            layout.IsEditing = true;
-            collectionView.ReloadItems(indexPathsToReload.ToArray());
-        }
-
         public void StartEditing(CalendarItem calendarItem)
-            => StartEditing(indexPathFor(calendarItem));
-
-        private NSIndexPath indexPathFor(CalendarItem calendarItem)
         {
-            var itemIndex = calendarItems.IndexOf(calendarItem);
-            if (itemIndex == -1)
-                return null;
-
-            var index = NSIndexPath.FromRowSection(itemIndex, 0);
-            return index;
+            StartEditing();
+            selectedItemId = calendarItem.Id;
+            reloadItem(calendarItem);
         }
 
         public void StopEditing()
         {
             IsEditing = false;
             layout.IsEditing = false;
-            layoutAttributes = calculateLayoutAttributes();
-            layout.InvalidateLayout();
-            editingItemIndexPath = null;
-
+            selectedItemId = null;
             onCollectionChanges();
         }
 
-        public NSIndexPath InsertItemView(DateTimeOffset startTime, TimeSpan duration)
+        public void InsertItemView(DateTimeOffset startTime, TimeSpan duration)
         {
             if (!IsEditing)
                 throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
 
-            editingItemIndexPath = insertCalendarItem(startTime, duration);
+            var item = new CalendarItem(newItemId, CalendarItemSource.TimeEntry, startTime, duration, FoundationResources.NewTimeEntry, CalendarIconKind.None);
+            selectedItemId = newItemId;
+
+            itemTappedSubject.OnNext(item);
+            calendarItems.Add(item);
+
+            layoutAttributes = calculateLayoutAttributes();
             collectionView.ReloadData();
-
-            var item = calendarItems[editingItemIndexPath.Row];
-            if (string.IsNullOrEmpty(item.Id))
-            {
-                itemTappedSubject.OnNext(item);
-            }
-
-            return editingItemIndexPath;
         }
 
         public void UpdateItemView(DateTimeOffset startTime, TimeSpan? duration)
@@ -260,7 +236,12 @@ namespace Toggl.iOS.ViewSources
             if (!IsEditing)
                 throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
 
-            editingItemIndexPath = updateCalendarItem(editingItemIndexPath, startTime, duration);
+            var position = indexFor(selectedItemId);
+            calendarItems[position] = itemAt(position)
+                .WithStartTime(startTime)
+                .WithDuration(duration);
+
+            layoutAttributes = calculateLayoutAttributes();
 
             updateEditingHours();
             layout.InvalidateLayoutForVisibleItems();
@@ -274,12 +255,13 @@ namespace Toggl.iOS.ViewSources
             if (!IsEditing)
                 throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
 
-            var indexToRemove = calendarItems.IndexOf(calendarItem);
+            var indexToRemove = indexFor(calendarItem);
             if (indexToRemove == -1)
                 return;
 
             var indexPathToRemove = NSIndexPath.FromItemSection(indexToRemove, 0);
-            removeCalendarItem(indexPathToRemove);
+            calendarItems.RemoveAt(indexToRemove);
+            layoutAttributes = calculateLayoutAttributes();
             collectionView.ReloadData();
         }
 
@@ -309,40 +291,21 @@ namespace Toggl.iOS.ViewSources
 
         private void onCollectionChanges()
         {
-            if (editingItemIndexPath != null
-                && (editingItemIndexPath.Item < 0 || editingItemIndexPath.Item >= calendarItems.Count))
-                return;
-
-            long? originalId = null;
-            if (IsEditing && editingItemIndexPath != null)
-            {
-                var editingIndex = (int)editingItemIndexPath.Item;
-                originalId = calendarItems[editingIndex].TimeEntryId;
-            }
-
             calendarItems = collection.IsEmpty ? new List<CalendarItem>() : collection[0].ToList();
+            runningTimeEntryId = calendarItems.FirstOrDefault(item => item.Duration == null).Id;
+
             layoutAttributes = calculateLayoutAttributes();
-
-            var runningIndex = calendarItems.IndexOf(item => item.Duration == null);
-            runningTimeEntryIndexPath = runningIndex >= 0 ? NSIndexPath.FromItemSection(runningIndex, 0) : null;
-
-            if (originalId != null)
-            {
-                var editingIndex = calendarItems.IndexOf(item => item.TimeEntryId == originalId);
-                editingItemIndexPath = editingIndex >= 0 ? NSIndexPath.FromItemSection(editingIndex, 0) : null;
-            }
-
             collectionView.ReloadData();
         }
 
         private void dateChanged(DateTimeOffset dateTimeOffset)
         {
-            this.date = dateTimeOffset.ToLocalTime().Date;
+            date = dateTimeOffset.ToLocalTime().Date;
         }
 
         private void updateLayoutAttributesIfNeeded()
         {
-            if (runningTimeEntryIndexPath == null)
+            if (selectedItemId == null)
                 return;
 
             layoutAttributes = calculateLayoutAttributes();
@@ -369,42 +332,6 @@ namespace Toggl.iOS.ViewSources
         private IList<CalendarItemLayoutAttributes> calculateLayoutAttributes()
             => layoutCalculator.CalculateLayoutAttributes(calendarItems);
 
-        private NSIndexPath insertCalendarItem(DateTimeOffset startTime, TimeSpan duration)
-        {
-            var calendarItem = new CalendarItem("", CalendarItemSource.TimeEntry, startTime, duration, FoundationResources.NewTimeEntry, CalendarIconKind.None);
-
-            calendarItems.Add(calendarItem);
-            var position = calendarItems.Count - 1;
-
-            layoutAttributes = calculateLayoutAttributes();
-
-            var indexPath = NSIndexPath.FromItemSection(position, 0);
-            return indexPath;
-        }
-
-        private NSIndexPath updateCalendarItem(NSIndexPath indexPath, DateTimeOffset startTime, TimeSpan? duration)
-        {
-            if (indexPath == null || indexPath.Item >= calendarItems.Count)
-                return null;
-
-            var position = (int)indexPath.Item;
-
-            calendarItems[position] = calendarItems[position]
-                .WithStartTime(startTime)
-                .WithDuration(duration);
-
-            layoutAttributes = calculateLayoutAttributes();
-
-            var updatedIndexPath = NSIndexPath.FromItemSection(position, 0);
-            return updatedIndexPath;
-        }
-
-        private void removeCalendarItem(NSIndexPath indexPath)
-        {
-            calendarItems.RemoveAt((int)indexPath.Item);
-            layoutAttributes = calculateLayoutAttributes();
-        }
-
         private void updateEditingHours()
         {
             if (!IsEditing)
@@ -415,7 +342,7 @@ namespace Toggl.iOS.ViewSources
             var endEditingHour = collectionView
                 .GetSupplementaryView(CalendarCollectionViewLayout.EditingHourSupplementaryViewKind, NSIndexPath.FromItemSection(1, 0)) as EditingHourSupplementaryView;
 
-            var attrs = layoutAttributes[(int)editingItemIndexPath.Item];
+            var attrs = LayoutAttributesForItemAtIndexPath(IndexPathForSelectedItem);
             if (startEditingHour != null)
             {
                 var hour = attrs.StartTime.ToLocalTime();
@@ -433,5 +360,35 @@ namespace Toggl.iOS.ViewSources
 
         private string editingHourFormat()
             => timeOfDayFormat.IsTwentyFourHoursFormat ? editingTwentyFourHoursFormat : editingTwelveHoursFormat;
+
+        private void reloadItem(string id)
+        {
+            var indexPath = indexPathFor(id);
+            if (indexPath != null)
+            {
+                collectionView.ReloadItems(new[] {indexPath});
+            }
+        }
+
+        private void reloadItem(CalendarItem item)
+            => reloadItem(item.Id);
+
+        private CalendarItem itemAt(int index)
+            => calendarItems[index];
+
+        private CalendarItem itemAt(NSIndexPath indexPath)
+            => calendarItems[(int)indexPath.Item];
+
+        private int indexFor(string id)
+            => calendarItems.IndexOf(i => id == i.Id);
+
+        private int indexFor(CalendarItem item)
+            => indexFor(item.Id);
+
+        private NSIndexPath indexPathFor(string id)
+        {
+            var index = indexFor(id);
+            return index >= 0 ? NSIndexPath.FromItemSection(index, 0) : null;
+        }
     }
 }

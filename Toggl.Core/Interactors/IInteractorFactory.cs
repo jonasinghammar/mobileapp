@@ -133,7 +133,7 @@ namespace Toggl.Core.Interactors
 
         #region Preferences
 
-        IInteractor<IObservable<IThreadSafePreferences>> GetPreferences();
+        IInteractor<IObservable<IThreadSafePreferences>> ObserveCurrentPreferences();
 
         IInteractor<IObservable<IThreadSafePreferences>> UpdatePreferences(EditPreferencesDTO dto);
 

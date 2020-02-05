@@ -212,7 +212,7 @@ namespace Toggl.Core.UI.ViewModels.Reports
                 analyticsData.ProjectsNotSyncedCount = summaryData.ProjectsNotSyncedCount;
 
                 var preferences = await interactorFactory
-                    .GetPreferences()
+                    .ObserveCurrentPreferences()
                     .Execute()
                     .FirstAsync();
 

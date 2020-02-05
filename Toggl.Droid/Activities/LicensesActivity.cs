@@ -9,6 +9,8 @@ using Toggl.Droid.Presentation;
 using Toggl.Droid.ViewHolders;
 using Toggl.Shared;
 using CoreResource = Toggl.Shared.Resources;
+using Toggl.Droid.Extensions;
+using Google.Android.Material.AppBar;
 
 namespace Toggl.Droid.Activities
 {
@@ -41,6 +43,7 @@ namespace Toggl.Droid.Activities
             recyclerView.SetAdapter(adapter);
 
             SetupToolbar(CoreResource.Licenses);
+            recyclerView.AttachMaterialScrollBehaviour(FindViewById<AppBarLayout>(Resource.Id.AppBarLayout));
         }
 
         protected override void InitializeBindings()

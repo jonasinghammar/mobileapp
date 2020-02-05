@@ -6,6 +6,7 @@ using Toggl.Core.Login;
 using Toggl.Core.Services;
 using Toggl.Core.Shortcuts;
 using Toggl.Core.Sync;
+using Toggl.Core.UI;
 using Toggl.Core.UI.Navigation;
 using Toggl.Core.UI.Services;
 using Toggl.Networking;
@@ -15,7 +16,7 @@ using Toggl.Storage;
 using Toggl.Storage.Queries;
 using Toggl.Storage.Settings;
 
-namespace Toggl.Core.UI
+namespace Toggl.Core.Tests
 {
     public class TestDependencyContainer : UIDependencyContainer
     {

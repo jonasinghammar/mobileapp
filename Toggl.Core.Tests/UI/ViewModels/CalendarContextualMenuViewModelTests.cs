@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Toggl.Core.Analytics;
 using Toggl.Core.Calendar;
 using Toggl.Core.DTOs;
+using Toggl.Core.Interactors;
 using Toggl.Core.Models;
 using Toggl.Core.Models.Interfaces;
 using Toggl.Core.Tests.Generators;
@@ -1270,6 +1272,15 @@ namespace Toggl.Core.Tests.UI.ViewModels
 
         public sealed class TheTimeEntryPeriodObservable : CalendarContextualMenuViewModelTest
         {
+
+            public TheTimeEntryPeriodObservable()
+            {
+                var preferences = new MockPreferences { TimeOfDayFormat = TimeFormat.TwelveHoursFormat };
+                var interactor = Substitute.For<IInteractor<IObservable<IThreadSafePreferences>>>();
+                interactor.Execute().ReturnsObservableOf(preferences);
+                InteractorFactory.ObserveCurrentPreferences().Returns(interactor);
+            }
+
             [Fact]
             public void StartsWithThePeriodFromCalendarItemPassedFirstOnCalendarItemUpdated()
             {
@@ -1293,8 +1304,7 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 ViewModel.OnCalendarItemUpdated.Execute(calendarItem);
                 TestScheduler.Start();
 
-                observer.Messages.Should().HaveCount(1);
-                observer.Messages.First().Value.Value
+                observer.LastEmittedValue()
                     .ToLower()
                     .Should()
                     .Be($"{calendarItem.StartTime.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)} - {calendarItem.EndTime.Value.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)}".ToLower());
@@ -1326,8 +1336,7 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 ViewModel.OnCalendarItemUpdated.Execute(newCalendarItem);
                 TestScheduler.Start();
 
-                observer.Messages.Should().HaveCount(2);
-                observer.Messages.Last().Value.Value
+                observer.LastEmittedValue()
                     .ToLower()
                     .Should()
                     .Be($"{newCalendarItem.StartTime.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)} - {newCalendarItem.EndTime.Value.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)}".ToLower());
@@ -1359,8 +1368,7 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 ViewModel.OnCalendarItemUpdated.Execute(newCalendarItem);
                 TestScheduler.Start();
 
-                observer.Messages.Should().HaveCount(2);
-                observer.Messages.Last().Value.Value
+                observer.LastEmittedValue()
                     .ToLower()
                     .Should()
                     .Be($"{newCalendarItem.StartTime.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)} - {newCalendarItem.EndTime.Value.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)}".ToLower());
@@ -1398,10 +1406,14 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 ViewModel.OnCalendarItemUpdated.Execute(calendarItem);
                 TestScheduler.Start();
 
+                var beforeCount = observer.Messages.Count();
+
                 ViewModel.OnCalendarItemUpdated.Execute(newCalendarItem);
                 TestScheduler.Start();
 
-                observer.Messages.Should().HaveCount(1);
+                var afterCount = observer.Messages.Count();
+
+                beforeCount.Should().Be(afterCount);
             }
 
             [Fact]
@@ -1430,8 +1442,7 @@ namespace Toggl.Core.Tests.UI.ViewModels
                 ViewModel.OnCalendarItemUpdated.Execute(newCalendarItem);
                 TestScheduler.Start();
 
-                observer.Messages.Should().HaveCount(2);
-                observer.Messages.Last().Value.Value
+                observer.LastEmittedValue()
                     .ToLower()
                     .Should()
                     .Be($"{newCalendarItem.StartTime.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat)} - {Shared.Resources.Now}".ToLower());

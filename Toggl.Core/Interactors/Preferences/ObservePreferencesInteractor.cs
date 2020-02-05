@@ -4,11 +4,11 @@ using Toggl.Core.Models.Interfaces;
 
 namespace Toggl.Core.Interactors
 {
-    internal sealed class GetPreferencesInteractor : IInteractor<IObservable<IThreadSafePreferences>>
+    internal sealed class ObservePreferencesInteractor : IInteractor<IObservable<IThreadSafePreferences>>
     {
         private readonly ITogglDataSource dataSource;
 
-        public GetPreferencesInteractor(ITogglDataSource dataSource)
+        public ObservePreferencesInteractor(ITogglDataSource dataSource)
         {
             this.dataSource = dataSource;
         }
