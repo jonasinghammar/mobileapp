@@ -59,6 +59,8 @@ namespace Toggl.Core.UI.ViewModels
                 container.BackgroundService,
                 container.InteractorFactory,
                 container.SchedulerProvider,
+                container.OnboardingStorage,
+                container.PermissionsChecker,
                 container.NavigationService));
 
             Tabs = getViewModels().ToImmutableList();
