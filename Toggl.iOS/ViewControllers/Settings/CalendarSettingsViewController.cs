@@ -66,14 +66,10 @@ namespace Toggl.iOS.ViewControllers.Settings
             }
         }
 
-        public override void DidMoveToParentViewController(UIViewController parent)
+        public override void ViewDidDisappear(bool animated)
         {
-            base.DidMoveToParentViewController(parent);
-
-            if (parent == null)
-            {
-                ViewModel.Save.Execute();
-            }
+            ViewModel.Save.Execute();
+            base.ViewDidDisappear(animated);
         }
 
         public override Task<bool> DismissFromNavigationController()
