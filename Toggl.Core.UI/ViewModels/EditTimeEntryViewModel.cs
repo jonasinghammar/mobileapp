@@ -207,7 +207,7 @@ namespace Toggl.Core.UI.ViewModels
                 .DistinctUntilChanged()
                 .AsDriver(false, schedulerProvider);
 
-            Preferences = interactorFactory.GetPreferences().Execute()
+            Preferences = interactorFactory.ObserveCurrentPreferences().Execute()
                 .AsDriver(null, schedulerProvider);
 
             // Actions

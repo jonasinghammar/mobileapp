@@ -16,6 +16,7 @@
             <ImageView
                 android:id="@+id/ProjectImageView"
                 android:src="@drawable/ic_project"
+                android:tint="@color/icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="16dp"
@@ -88,6 +89,7 @@
             <ImageView
                 android:id="@+id/ChangeWorkspaceViewWorkspaceImage"
                 android:src="@drawable/ic_workspace"
+                android:tint="@color/icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="end"
@@ -139,6 +141,7 @@
             <ImageView
                 android:id="@+id/ChangeWorkspaceViewClientImage"
                 android:src="@drawable/ic_client"
+                android:tint="@color/icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="end"
@@ -190,6 +193,7 @@
             <ImageView
                 android:id="@+id/ChangeWorkspaceViewPrivateProjectImage"
                 android:src="@drawable/ic_padlock"
+                android:tint="@color/icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="16dp"

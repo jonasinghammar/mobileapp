@@ -179,6 +179,7 @@
         <ImageView
             android:id="@+id/TimeEntriesLogCellBillable"
             android:src="@drawable/ic_billable"
+            android:tint="@color/icon"
             app:layout_constraintTop_toTopOf="@id/TimeEntriesLogCellDuration"
             app:layout_constraintRight_toLeftOf="@id/TimeEntriesLogCellDuration"
             app:layout_constraintBottom_toBottomOf="@id/TimeEntriesLogCellDuration"
@@ -188,6 +189,7 @@
         <ImageView
             android:id="@+id/TimeEntriesLogCellTags"
             android:src="@drawable/ic_tag"
+            android:tint="@color/icon"
             app:layout_constraintTop_toTopOf="@id/TimeEntriesLogCellDuration"
             app:layout_constraintRight_toLeftOf="@id/TimeEntriesLogCellBillable"
             app:layout_constraintBottom_toBottomOf="@id/TimeEntriesLogCellDuration"

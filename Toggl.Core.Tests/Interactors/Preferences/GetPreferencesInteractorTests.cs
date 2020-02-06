@@ -17,7 +17,7 @@ namespace Toggl.Core.Tests.Interactors
                 IThreadSafePreferences prefs = Substitute.For<IThreadSafePreferences>();
                 DataSource.Preferences.Current.Returns(Observable.Return(prefs));
 
-                var result = await InteractorFactory.GetPreferences().Execute().FirstAsync();
+                var result = await InteractorFactory.ObserveCurrentPreferences().Execute().FirstAsync();
 
                 result.Should().Be(prefs);
             }

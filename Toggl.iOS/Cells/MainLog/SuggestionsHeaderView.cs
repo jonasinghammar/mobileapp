@@ -9,6 +9,8 @@ using UIKit;
 
 namespace Toggl.iOS.Cells.MainLog
 {
+    // this is supposed to work with SuggestionsHeaderViewModel as a generic parameter,
+    // but due to variance constraints on generic types in C# we have to use the base type
     public partial class SuggestionsHeaderView : BaseTableHeaderFooterView<SuggestionsHeaderViewModel>
     {
         public static readonly string Identifier = "SuggestionsHeaderView";

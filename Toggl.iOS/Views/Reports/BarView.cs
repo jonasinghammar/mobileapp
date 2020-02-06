@@ -23,8 +23,8 @@ namespace Toggl.iOS.Views.Reports
                        UIColor filledColor = null,
                        UIColor totalColor = null)
         {
-            this.filledValue = filledValue;
-            this.totalValue = totalValue;
+            this.filledValue = double.IsFinite(filledValue) ? filledValue : 0;
+            this.totalValue = double.IsFinite(totalValue) ? totalValue : 0;
 
             filledColor ??= ColorAssets.ReportsBarChartFilled;
             totalColor ??= ColorAssets.ReportsBarChartTotal;

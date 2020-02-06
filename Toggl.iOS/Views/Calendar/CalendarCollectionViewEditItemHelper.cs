@@ -190,7 +190,7 @@ namespace Toggl.iOS.Views.Calendar
             previousStartTime = calendarItem.StartTime;
             previousEndTime = calendarItem.EndTime;
 
-            var itemIndexPath = dataSource.IndexPathForEditingItem();
+            var itemIndexPath = dataSource.IndexPathForSelectedItem;
             var cell = CollectionView.CellForItem(itemIndexPath) as CalendarItemView;
             if (cell == null)
             {
@@ -399,7 +399,7 @@ namespace Toggl.iOS.Views.Calendar
 
         private void stopEditingCurrentCellIfNotVisible()
         {
-            var itemIndexPath = dataSource.IndexPathForEditingItem();
+            var itemIndexPath = dataSource.IndexPathForSelectedItem;
             var cellNotVisible = CollectionView.CellForItem(itemIndexPath) == null;
             if (cellNotVisible)
             {

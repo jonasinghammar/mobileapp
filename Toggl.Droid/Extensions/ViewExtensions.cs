@@ -51,10 +51,7 @@ namespace Toggl.Droid.Extensions
 
             scrollView.SetOnScrollChangeListener(new MaterialScrollBehaviorListener(appBarLayout));
 
-            if (scrollView is NestedScrollView)
-            {
-                appBarLayout.Post(() => appBarLayout.Elevation = 0);
-            }
+            appBarLayout.Post(() => appBarLayout.Elevation = 0);
         }
 
         private class MaterialScrollBehaviorListener : Java.Lang.Object, View.IOnScrollChangeListener

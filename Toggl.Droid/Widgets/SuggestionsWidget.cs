@@ -57,8 +57,8 @@ namespace Toggl.Droid.Widgets
         private void reportInstallationState(Context context, bool installed)
         {
             var intent = new Intent(context, typeof(WidgetsAnalyticsService));
-            intent.SetAction(WidgetsAnalyticsService.TimerWidgetInstallAction);
-            intent.PutExtra(WidgetsAnalyticsService.TimerWidgetInstallStateParameter, installed);
+            intent.SetAction(WidgetsAnalyticsService.SuggestionsWidgetInstallAction);
+            intent.PutExtra(WidgetsAnalyticsService.SuggestionsWidgetInstallStateParameter, installed);
             WidgetsAnalyticsService.EnqueueWork(context, intent);
         }
     }

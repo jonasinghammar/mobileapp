@@ -27,7 +27,8 @@ namespace Toggl.Core.UI.ViewModels.Calendar.ContextualMenu
         private readonly ISubject<Unit> discardChangesSubject = new Subject<Unit>();
         private readonly BehaviorSubject<bool> menuVisibilitySubject = new BehaviorSubject<bool>(false);
         private readonly ISubject<TimeEntryDisplayInfo> timeEntryInfoSubject = new Subject<TimeEntryDisplayInfo>();
-        private readonly ISubject<string> timeEntryPeriodSubject = new Subject<string>();
+        private readonly BehaviorSubject<TimeSpan?> currentDuration = new BehaviorSubject<TimeSpan?>(default);
+        private readonly BehaviorSubject<DateTimeOffset> currentStartTimeOffset = new BehaviorSubject<DateTimeOffset>(default);
         private readonly ISubject<CalendarItem?> calendarItemInEditMode = new Subject<CalendarItem?>();
         private readonly ISubject<CalendarItem> calendarItemRemoved = new Subject<CalendarItem>();
 
@@ -41,8 +42,6 @@ namespace Toggl.Core.UI.ViewModels.Calendar.ContextualMenu
         private CalendarItem currentCalendarItem;
         private TimeEntryDisplayInfo currentTimeEntryDisplayInfo;
         private ContextualMenuType currentMenuType = ContextualMenuType.Closed;
-        private DateTimeOffset currentStartTimeOffset;
-        private TimeSpan? currentDuration;
 
         public IObservable<CalendarContextualMenu> CurrentMenu { get; }
 
@@ -97,9 +96,21 @@ namespace Toggl.Core.UI.ViewModels.Calendar.ContextualMenu
             DiscardChanges = discardChangesSubject.AsDriver(schedulerProvider);
             TimeEntryInfo = timeEntryInfoSubject.AsDriver(schedulerProvider);
             MenuVisible = menuVisibilitySubject.AsDriver(schedulerProvider);
-            TimeEntryPeriod = timeEntryPeriodSubject.AsDriver(schedulerProvider);
             CalendarItemInEditMode = calendarItemInEditMode.AsDriver(schedulerProvider);
             CalendarItemRemoved = calendarItemRemoved.AsDriver(schedulerProvider);
+
+            var useTwentyFourHourFormatObservable = interactorFactory
+                .ObserveCurrentPreferences().Execute()
+                .Select(p => p.TimeOfDayFormat.IsTwentyFourHoursFormat)
+                .DistinctUntilChanged();
+
+            TimeEntryPeriod = Observable.CombineLatest(
+                currentStartTimeOffset.DistinctUntilChanged(),
+                currentDuration.DistinctUntilChanged(),
+                useTwentyFourHourFormatObservable,
+                formatCurrentPeriod)
+                .DistinctUntilChanged()
+                .AsDriver(schedulerProvider);
         }
 
         private async Task handleCalendarItemInput(CalendarItem? calendarItem)
@@ -196,20 +207,17 @@ namespace Toggl.Core.UI.ViewModels.Calendar.ContextualMenu
                 timeEntryInfoSubject.OnNext(currentTimeEntryDisplayInfo);
             }
 
-            if (calendarItem.StartTime != currentStartTimeOffset || calendarItem.Duration != currentDuration)
-            {
-                currentStartTimeOffset = calendarItem.StartTime;
-                currentDuration = calendarItem.Duration;
-                timeEntryPeriodSubject.OnNext(formatCurrentPeriod());
-            }
+            currentStartTimeOffset.OnNext(calendarItem.StartTime);
+            currentDuration.OnNext(calendarItem.Duration);
         }
 
-        private string formatCurrentPeriod()
+        private string formatCurrentPeriod(DateTimeOffset startTime, TimeSpan? duration, bool useTwentyFourHoursFormat)
         {
-            var startTimeString = currentStartTimeOffset.ToLocalTime().ToString(Resources.EditingTwelveHoursFormat);
-            var endTime = currentStartTimeOffset.ToLocalTime() + currentDuration;
+            var format = useTwentyFourHoursFormat ? Resources.EditingTwentyFourHoursFormat : Resources.EditingTwelveHoursFormat;
+            var startTimeString = startTime.ToLocalTime().ToString(format);
+            var endTime = startTime.ToLocalTime() + duration;
             var endTimeString = endTime.HasValue
-                ? endTime.Value.ToString(Resources.EditingTwelveHoursFormat)
+                ? endTime.Value.ToString(format)
                 : Resources.Now;
 
             return $"{startTimeString} - {endTimeString}";

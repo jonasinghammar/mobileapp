@@ -38,12 +38,13 @@ namespace Toggl.Core.Tests.UI.Transformations
             [Property]
             public Property ReturnsAFormattedStringForAnyOtherDate()
             {
+                var culture = CultureInfo.InvariantCulture;
                 var arb = Arb.Default.DateTimeOffset().Filter(d => d < now.AddDays(-1));
+
                 return Prop.ForAll(arb, date =>
                 {
-                    var result = DateToTitleString.Convert(date, now);
-                    var expectedCulture = CultureInfo.CreateSpecificCulture("en-US");
-                    result.Should().Be(date.ToLocalTime().ToString("ddd, dd MMM", expectedCulture));
+                    var result = DateToTitleString.Convert(date, now, culture);
+                    result.Should().Be(date.ToLocalTime().ToString("ddd, dd MMM", culture));
                 });
             }
         }

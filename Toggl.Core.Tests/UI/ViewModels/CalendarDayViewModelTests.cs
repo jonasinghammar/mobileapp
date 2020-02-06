@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -15,6 +16,7 @@ using Toggl.Core.Models.Interfaces;
 using Toggl.Core.Tests.Generators;
 using Toggl.Core.Tests.Mocks;
 using Toggl.Core.Tests.TestExtensions;
+using Toggl.Core.UI.Helper;
 using Toggl.Core.UI.Navigation;
 using Toggl.Core.UI.Transformations;
 using Toggl.Core.UI.ViewModels;
@@ -32,11 +34,11 @@ namespace Toggl.Core.Tests.UI.ViewModels
         {
             protected const long TimeEntryId = 10;
             protected const long DefaultWorkspaceId = 1;
-            protected IInteractor<IObservable<IEnumerable<CalendarItem>>> CalendarInteractor { get; }
+            protected IInteractor<IObservable<IEnumerable<CalendarItem>>> CalendarInteractor { get; private set; }
 
             protected static DateTimeOffset Now { get; } = new DateTimeOffset(2018, 8, 10, 12, 0, 0, TimeSpan.Zero);
 
-            protected CalendarDayViewModelTest()
+            protected override void AdditionalSetup()
             {
                 CalendarInteractor = Substitute.For<IInteractor<IObservable<IEnumerable<CalendarItem>>>>();
 

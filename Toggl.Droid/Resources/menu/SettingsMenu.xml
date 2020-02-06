@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/Settings"
+        android:iconTint="@color/icon"
         app:showAsAction="always"
         android:icon="@drawable/ic_settings"
         tools:title="Done"

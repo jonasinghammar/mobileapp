@@ -87,29 +87,7 @@ namespace Toggl.Core.UI.Navigation
 
             if (viewModelType == typeof(MainTabBarViewModel))
             {
-                return new MainTabBarViewModel(
-                    dependencyContainer.TimeService,
-                    dependencyContainer.DataSource,
-                    dependencyContainer.SyncManager,
-                    dependencyContainer.RatingService,
-                    dependencyContainer.UserPreferences,
-                    dependencyContainer.AnalyticsService,
-                    dependencyContainer.BackgroundService,
-                    dependencyContainer.InteractorFactory,
-                    dependencyContainer.OnboardingStorage,
-                    dependencyContainer.SchedulerProvider,
-                    dependencyContainer.PermissionsChecker,
-                    dependencyContainer.NavigationService,
-                    dependencyContainer.RemoteConfigService,
-                    dependencyContainer.AccessibilityService,
-                    dependencyContainer.UpdateRemoteConfigCacheService,
-                    dependencyContainer.AccessRestrictionStorage,
-                    dependencyContainer.RxActionFactory,
-                    dependencyContainer.UserAccessManager,
-                    dependencyContainer.PrivateSharedStorageService,
-                    dependencyContainer.PlatformInfo,
-                    dependencyContainer.WidgetsService,
-                    dependencyContainer.DateRangeShortcutsService);
+                return new MainTabBarViewModel(dependencyContainer);
             }
 
             if (viewModelType == typeof(MainViewModel))
