@@ -175,43 +175,6 @@ namespace Toggl.Core.Tests.UI.ViewModels
             }
         }
 
-        public sealed class TheCloseWithDefaultResultMethod : CalendarSettingsViewModelTest
-        {
-            [Fact, LogIfTooSlow]
-            public async Task SavesThePreviouslySelectedCalendarIds()
-            {
-                var initialSelectedIds = new List<string> { "0", "1", "2", "3" };
-                UserPreferences.EnabledCalendarIds().Returns(initialSelectedIds);
-                PermissionsChecker.CalendarPermissionGranted.Returns(Observable.Return(true));
-                UserPreferences.CalendarIntegrationEnabled().Returns(true);
-
-                var userCalendars = Enumerable
-                    .Range(0, 9)
-                    .Select(id => new UserCalendar(
-                        id.ToString(),
-                        $"Calendar #{id}",
-                        $"Source #{id % 3}",
-                        false));
-
-                InteractorFactory
-                    .GetUserCalendars()
-                    .Execute()
-                    .Returns(Observable.Return(userCalendars));
-                await ViewModel.Initialize();
-                var selectedIds = new[] { "0", "2", "4", "7" };
-
-                var calendars = userCalendars
-                    .Where(calendar => selectedIds.Contains(calendar.Id))
-                    .Select(calendar => new SelectableUserCalendarViewModel(calendar, false));
-                ViewModel.SelectCalendar.ExecuteSequentially(calendars).Subscribe();
-
-                ViewModel.CloseWithDefaultResult();
-                TestScheduler.Start();
-
-                UserPreferences.Received().SetEnabledCalendars(initialSelectedIds.ToArray());
-            }
-        }
-
         public sealed class TheSaveAction : CalendarSettingsViewModelTest
         {
             [Fact, LogIfTooSlow]
