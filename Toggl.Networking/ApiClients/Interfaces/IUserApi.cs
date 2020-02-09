@@ -9,6 +9,7 @@ namespace Toggl.Networking.ApiClients
           IPullingSingleApiClient<IUser>
     {
         Task<IUser> GetWithGoogle();
+        Task<IUser> GetWithApple();
         Task<string> ResetPassword(Email email);
         Task<IUser> SignUp(Email email, Password password, bool termsAccepted, int countryId, string timezone);
         Task<IUser> SignUpWithGoogle(string googleToken, bool termsAccepted, int countryId, string timezone);

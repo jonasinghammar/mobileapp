@@ -84,6 +84,12 @@ namespace Toggl.Networking.Tests.ApiClients
                 => api.GetWithGoogle();
         }
 
+        public class TheGetWithAppleMethod : FailOnPurpose
+        {
+            protected override Task<IUser> CallEndpoint(IUserApi api)
+                => api.GetWithGoogle();
+        }
+
         public class TheUpdateMethod : Base
         {
             protected override Task<IUser> CallEndpoint(IUserApi api)

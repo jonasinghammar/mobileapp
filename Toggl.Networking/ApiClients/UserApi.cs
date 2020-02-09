@@ -38,6 +38,11 @@ namespace Toggl.Networking.ApiClients
             => await SendRequest<User>(endPoints.GetWithGoogle, AuthHeader)
                 .ConfigureAwait(false);
 
+        public async Task<IUser> GetWithApple()
+        {
+            throw new NotImplementedException("Sign in with Apple not implemented yet");
+        }
+
         public async Task<IUser> Update(IUser user)
             => await SendRequest(endPoints.Put, AuthHeader, user as User ?? new User(user), SerializationReason.Post)
                 .ConfigureAwait(false);
