@@ -12,5 +12,6 @@ namespace Toggl.Networking.ApiClients
         Task<string> ResetPassword(Email email);
         Task<IUser> SignUp(Email email, Password password, bool termsAccepted, int countryId, string timezone);
         Task<IUser> SignUpWithGoogle(string googleToken, bool termsAccepted, int countryId, string timezone);
+        Task<IUser> SignUpWithApple(string appleToken, bool termsAccepted, int countryId, string timezone);
     }
 }

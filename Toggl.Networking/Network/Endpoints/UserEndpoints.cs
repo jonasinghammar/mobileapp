@@ -19,6 +19,8 @@ namespace Toggl.Networking.Network
 
         public Endpoint PostWithGoogle => Endpoint.Post(baseUrl, "signup?app_name=toggl_mobile");
 
+        public Endpoint PostWithApple => Endpoint.Post(baseUrl, "signup_with_apple");
+
         public Endpoint Put => Endpoint.Put(baseUrl, "me");
 
         public Endpoint ResetPassword => Endpoint.Post(baseUrl, "me/lost_passwords");
